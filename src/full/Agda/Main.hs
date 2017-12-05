@@ -113,7 +113,9 @@ runAgdaWithOptions generateHTML progName opts
                                       = (MAlonzo.compilerMain NotMain =<<) . (failIfNoInt =<<)
                       | ghc           = (MAlonzo.compilerMain IsMain =<<) . (failIfNoInt =<<)
                       | epic          = (Epic.compilerMain    =<<) . (failIfNoInt =<<)
-                      | js            = (JS.compilerMain      =<<) . (failIfNoInt =<<)
+                      | js && compileNoMain
+                                      = (JS.compilerMain NotMain =<<) . (failIfNoInt =<<)
+                      | js            = (JS.compilerMain IsMain =<<) . (failIfNoInt =<<)
                       | uhc && compileNoMain
                                       = (UHC.compilerMain NotMain =<<) . (failIfNoInt =<<)
                       | uhc           = (UHC.compilerMain IsMain =<<)  . (failIfNoInt =<<)

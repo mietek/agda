@@ -74,9 +74,9 @@ import Agda.Utils.Impossible ( Impossible(Impossible), throwImpossible )
 -- Entry point into the compiler
 --------------------------------------------------
 
-compilerMain :: Interface -> TCM ()
-compilerMain mainI = inCompilerEnv mainI $ do
-  doCompile IsMain mainI $ do
+compilerMain :: IsMain -> Interface -> TCM ()
+compilerMain isMain mainI = inCompilerEnv mainI $ do
+  doCompile isMain mainI $ do
     compile
   copyRTEModules
 

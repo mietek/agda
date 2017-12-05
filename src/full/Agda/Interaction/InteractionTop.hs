@@ -566,7 +566,8 @@ interpret (Cmd_compile b file argv) =
         lift $ case b of
           GHC       -> MAlonzo.compilerMain IsMain i
           GHCNoMain -> MAlonzo.compilerMain NotMain i
-          JS        -> JS.compilerMain i
+          JS        -> JS.compilerMain IsMain i
+          JSNoMain  -> JS.compilerMain NotMain i
           LaTeX     -> LaTeX.generateLaTeX i
         display_info $ Info_CompilationOk
       Imp.SomeWarnings w ->
@@ -962,6 +963,7 @@ withCurrentFile m = do
 data Backend = GHC
              | GHCNoMain
              | JS
+             | JSNoMain
              | LaTeX
     deriving (Show, Read, Eq)
 
