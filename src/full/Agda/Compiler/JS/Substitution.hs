@@ -78,31 +78,6 @@ lookup :: Exp -> MemberId -> Exp
 lookup (Object o) l = findWithDefault Undefined l o
 lookup e          l = Lookup e l
 
--- Replace any top-level occurrences of self
--- (needed because JS is a cbv language, so any top-level
--- recursions would evaluate before the module has been defined,
--- e.g. exports = { x: 1, y: exports.x } results in an exception,
--- as exports is undefined at the point that exports.x is evaluated),
-
-self :: Exp -> Exp -> Exp
-self e (Self)         = e
-self e (Object o)     = Object (Map.map (self e) o)
-self e (Array es)     = Array (List.map (\(c, x) -> (c, self e x)) es)
-self e (Apply f es)   = case (self e f) of
-  (Lambda n g) -> self e (subst' n es g)
-  g            -> Apply g (List.map (self e) es)
-self e (Lookup f l)   = lookup (self e f) l
-self e (If f g h)     = If (self e f) (self e g) (self e h)
-self e (BinOp f op g) = BinOp (self e f) op (self e g)
-self e (PreOp op f)   = PreOp op (self e f)
-self e f              = f
-
--- Find the fixed point of an expression, with no top-level occurrences
--- of self.
-
-fix :: Exp -> Exp
-fix f = e where e = self e f
-
 -- Some helper functions
 
 curriedApply :: Exp -> [Exp] -> Exp
@@ -113,13 +88,3 @@ curriedLambda n = iterate' n (Lambda 1)
 
 emp :: Exp
 emp = Object (empty)
-
-union :: Exp -> Exp -> Exp
-union (Object o) (Object p) = Object (unionWith union o p)
-union e          f          = e
-
-vine :: [MemberId] -> Exp -> Exp
-vine ls e = foldr (\ l e -> Object (singleton l e)) e ls
-
-object :: [([MemberId],Exp)] -> Exp
-object = foldr (\ (ls,e) -> (union (vine ls e))) emp
