@@ -31,7 +31,7 @@ import Agda.Syntax.Common
 import Agda.Syntax.Concrete.Name ( isNoName )
 import Agda.Syntax.Abstract.Name
   ( QName,
-    mnameToList, qnameName, qnameModule, nameId )
+    mnameToList, qnameName, qnameModule, nameId, nameConcrete, nameCanonical, nameBindingSite, nameFixity, nameIsRecordName )
 import Agda.Syntax.Internal
   ( Name, Type
   , nameFixity, unDom, telToList )
@@ -284,7 +284,7 @@ jsMember n
   -- Anonymous fields are used for where clauses,
   -- and they're all given the concrete name "_",
   -- so we disambiguate them using their name id.
-  | isNoName n = MemberId ("_" ++ show (nameId n))
+  | isNoName n = let NameId k _ = nameId n in MemberId $ "_" ++ show k
   | otherwise  = MemberId $ prettyShow n
 
 global' :: QName -> TCM (Exp, JSQName)
