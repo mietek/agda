@@ -287,7 +287,7 @@ exports n lss [] = Empty
 exports n lss es0@(Export ls e : es)
   -- If the parent of @ls@ is already defined (or no parent exists), @ls@ can be defined
   | maybe True (`member` lss) parent =
-      "exports" <> hcat (map brackets (pretties n ls)) <+> "=" <+> indent (pretty n e) <> ";" $+$
+      "exports" <> hcat (map brackets (pretties n ls)) <+> "=" <+> indent (pretty n e) <> ";" $++$
       exports n (insert ls lss) es
   -- If the parent is not yet defined, first define it as empty object, and then continue with @ls@.
   | otherwise =
@@ -306,8 +306,8 @@ instance Pretty Module where
     , imports
     , exports opt Set.empty es
     , pretty opt callMain
+    , "\n"
     ]
-    $+$ ""
     where
       imports = vcat [
         "var " <> indent (pretty opt e) <+> "=" <+> "require(" <> modname e <> ");"
@@ -325,8 +325,8 @@ instance Pretty Module where
     , exports opt Set.empty es
     , pretty opt callMain
     , "; return exports; });"
+    , "\n"
     ]
-    $+$ "" -- Final newline
     where
       les = toList (globals es <> Set.fromList is)
 
