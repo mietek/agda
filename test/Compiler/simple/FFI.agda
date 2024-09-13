@@ -24,6 +24,19 @@ listMap f (x ∷ xs) = f x ∷ listMap f xs
   agdaMap = listMap () ()
 #-}
 
+-- example of mapping Haskell record to Agda record
+record Point : Set where
+  constructor MkPoint
+  field
+    x y : Nat
+{-# FOREIGN GHC
+  data Point = MkPoint
+    { px :: Integer
+    , py :: Integer
+    }
+#-}
+{-# COMPILE GHC Point = data Point (MkPoint) #-}
+
 open import Common.IO
 open import Common.Unit
 
