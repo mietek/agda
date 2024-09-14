@@ -302,7 +302,8 @@ instance Pretty [(GlobalId, Export)] where
 
 instance Pretty Module where
   pretty opt@(n, min, JSCJS) (Module m is es callMain) = vsep
-    [ "var agdaRTS" <+> "=" <+> "require(\"agda-rts\");"
+    [ "\"use strict\";"
+    , "var agdaRTS" <+> "=" <+> "require(\"agda-rts\");"
     , imports
     , exports opt Set.empty es
     , pretty opt callMain
@@ -315,7 +316,8 @@ instance Pretty Module where
         ]
       les = toList (globals es <> Set.fromList is)
   pretty opt@(n, min, JSAMD) (Module m is es callMain) = vsep
-    [ "define(['agda-rts'"
+    [ "\"use strict\";"
+    , "define(['agda-rts'"
       <+> hcat [ ", " <+> modname e | e <- les ]
       <+> "],"
     , "function(agdaRTS"
